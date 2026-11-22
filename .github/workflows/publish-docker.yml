@@ -46,6 +46,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish image
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: ./ehelp
@@ -55,3 +56,22 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Save image archive
+        if: github.event_name != 'pull_request'
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          IMAGE_NAME="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker pull "${IMAGE_NAME}@${DIGEST}"
+          docker tag "${IMAGE_NAME}@${DIGEST}" ehelp:offline
+          docker save ehelp:offline -o ehelp-image.tar
+
+      - name: Upload offline image archive
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ehelp-docker-image-${{ github.sha }}
+          path: ehelp-image.tar
+          if-no-files-found: error
+          retention-days: 30

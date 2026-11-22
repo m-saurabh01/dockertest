@@ -45,7 +45,14 @@ Run those commands from the **portable repository root** (the directory containi
 
 The port is published on loopback only by default. Keep `EHELP_DEV_ADMIN` set to `0`; for deployments exposed beyond your own computer, put the app behind an authenticated gateway that supplies the `iv-user`, `iv-groups`, and `iv-name` headers.
 
-The workflow at `.github/workflows/publish-docker.yml` builds from `./ehelp` (not the whole portable repository) and publishes `ghcr.io/<owner>/<repository>` on pushes and version tags. Pull requests build the image without publishing it.
+The workflow at `.github/workflows/publish-docker.yml` builds from `./ehelp` (not the whole portable repository) and publishes `ghcr.io/<owner>/<repository>` on pushes and version tags. It also uploads `ehelp-image.tar` as a downloadable Actions artifact (retained for 30 days). The image contains the Python runtime dependencies and built frontend; after downloading the tar, transfer it to the offline Docker host and run:
+
+```bash
+docker load -i ehelp-image.tar
+docker run -d --name ehelp -p 127.0.0.1:8123:8123 -v ehelp-data:/data ehelp:offline
+```
+
+These commands require no internet after the image tar is available locally. The named volume stores application data separately from the image. Optional AI answering requires an Ollama service and model separately; they are not bundled in this application image.
 
 ### Windows (Offline)
 
