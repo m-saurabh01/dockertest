@@ -1,0 +1,31 @@
+# Portable runtimes
+/Python/
+/Node/
+
+# Python environments and generated files
+/ehelp/backend/.venv/
+/ehelp/backend/venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Application data and local configuration
+/ehelp/backend/data/
+/ehelp/backend/.env
+/ehelp/backend/.env.*
+!/ehelp/backend/.env.example
+
+# Frontend dependencies and build output
+/ehelp/frontend/node_modules/
+/ehelp/frontend/dist/
+
+# OS and editor files
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+
+# Logs and temporary files
+*.log
+*.tmp

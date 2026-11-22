@@ -1,0 +1,15 @@
+services:
+  ehelp:
+    build: .
+    image: ehelp:latest
+    ports:
+      - "127.0.0.1:8123:8123"
+    environment:
+      EHELP_DATA_DIR: /data
+      EHELP_DEV_ADMIN: ${EHELP_DEV_ADMIN:-0}
+    volumes:
+      - ehelp-data:/data
+    restart: unless-stopped
+
+volumes:
+  ehelp-data:
