@@ -35,15 +35,17 @@ Then open **http://localhost:8123** in Chrome.
 Build and start the app (Docker Compose builds the frontend and backend into one image):
 
 ```bash
-docker compose up --build -d
+docker compose -f ehelp/docker-compose.yml up --build -d
 # Open http://localhost:8123
-docker compose logs -f ehelp
-docker compose down
+docker compose -f ehelp/docker-compose.yml logs -f ehelp
+docker compose -f ehelp/docker-compose.yml down
 ```
 
-The Compose setup keeps the SQLite database, uploaded files, and assets in the persistent `ehelp-data` volume. To build the image without Compose, run `docker build -t ehelp:latest .` from this directory, then run it with `docker run -d --name ehelp -p 127.0.0.1:8123:8123 -v ehelp-data:/data ehelp:latest`.
+Run those commands from the **portable repository root** (the directory containing `START.bat`, `Python`, `Node`, and `ehelp`). The Compose setup keeps the SQLite database, uploaded files, and assets in the persistent `ehelp-data` volume. To build the image without Compose, run `docker build -f ehelp/Dockerfile -t ehelp:latest ehelp`, then run it with `docker run -d --name ehelp -p 127.0.0.1:8123:8123 -v ehelp-data:/data ehelp:latest`.
 
 The port is published on loopback only by default. Keep `EHELP_DEV_ADMIN` set to `0`; for deployments exposed beyond your own computer, put the app behind an authenticated gateway that supplies the `iv-user`, `iv-groups`, and `iv-name` headers.
+
+The workflow at `.github/workflows/publish-docker.yml` builds from `./ehelp` (not the whole portable repository) and publishes `ghcr.io/<owner>/<repository>` on pushes and version tags. Pull requests build the image without publishing it.
 
 ### Windows (Offline)
 
